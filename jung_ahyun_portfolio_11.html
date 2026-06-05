@@ -33,6 +33,14 @@ window.addEventListener('load', function() {
     var iframe = document.getElementById('heroVimeo');
     if(iframe && window.Vimeo) {
       vimeoPlayer = new Vimeo.Player(iframe);
+      vimeoPlayer.setMuted(true).then(function() {
+        return vimeoPlayer.play();
+      }).catch(function() {
+        document.addEventListener('touchstart', function tryPlay() {
+          vimeoPlayer.play();
+          document.removeEventListener('touchstart', tryPlay);
+        }, { once: true });
+      });
     }
   };
   document.head.appendChild(script);
@@ -233,7 +241,7 @@ footer{border-top:1px solid var(--border);padding:24px 48px;display:flex;justify
 <!-- HERO -->
 <section id="hero">
   <div class="hero-media">
-    <iframe id="heroVimeo" src="https://player.vimeo.com/video/1198403761?autoplay=1&muted=1&loop=1&background=1&controls=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+    <iframe id="heroVimeo" src="https://player.vimeo.com/video/1198403761?autoplay=1&muted=1&loop=1&background=1&controls=0&playsinline=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen playsinline></iframe>
   </div>
   <div class="hero-grad"></div>
   <div class="hero-grad2"></div>
@@ -359,6 +367,14 @@ window.addEventListener('load', function() {
     var iframe = document.getElementById('heroVimeo');
     if(iframe && window.Vimeo) {
       vimeoPlayer = new Vimeo.Player(iframe);
+      vimeoPlayer.setMuted(true).then(function() {
+        return vimeoPlayer.play();
+      }).catch(function() {
+        document.addEventListener('touchstart', function tryPlay() {
+          vimeoPlayer.play();
+          document.removeEventListener('touchstart', tryPlay);
+        }, { once: true });
+      });
     }
   };
   document.head.appendChild(script);
