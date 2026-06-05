@@ -26,23 +26,44 @@ body{background:var(--bg);color:var(--white);font-family:'Barlow Condensed',sans
 var vimeoPlayer = null;
 var isMuted = true;
 
+// Vimeo 플레이어 초기화 — 모바일(Safari/Chrome) 자동재생 대응
+function initVimeo() {
+  var iframe = document.getElementById('heroVimeo');
+  if (!iframe || !window.Vimeo) return;
+  vimeoPlayer = new Vimeo.Player(iframe);
+  vimeoPlayer.setMuted(true);
+  vimeoPlayer.setVolume(0);
+  var playPromise = vimeoPlayer.play();
+  if (playPromise !== undefined) {
+    playPromise.catch(function() {
+      // 자동재생 정책으로 막힌 경우 — 첫 유저 인터랙션 시 재생
+      var events = ['touchstart', 'touchend', 'click', 'scroll'];
+      function onUserAction() {
+        vimeoPlayer.setMuted(true);
+        vimeoPlayer.play();
+        events.forEach(function(e) {
+          document.removeEventListener(e, onUserAction);
+        });
+      }
+      events.forEach(function(e) {
+        document.addEventListener(e, onUserAction, { once: true, passive: true });
+      });
+    });
+  }
+  // Page Visibility API — 탭 전환 후 복귀 시 재생 재개
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+      vimeoPlayer.getPaused().then(function(paused) {
+        if (paused) vimeoPlayer.play();
+      });
+    }
+  });
+}
+
 window.addEventListener('load', function() {
   var script = document.createElement('script');
   script.src = 'https://player.vimeo.com/api/player.js';
-  script.onload = function() {
-    var iframe = document.getElementById('heroVimeo');
-    if(iframe && window.Vimeo) {
-      vimeoPlayer = new Vimeo.Player(iframe);
-      vimeoPlayer.setMuted(true).then(function() {
-        return vimeoPlayer.play();
-      }).catch(function() {
-        document.addEventListener('touchstart', function tryPlay() {
-          vimeoPlayer.play();
-          document.removeEventListener('touchstart', tryPlay);
-        }, { once: true });
-      });
-    }
-  };
+  script.onload = initVimeo;
   document.head.appendChild(script);
 });
 
@@ -241,7 +262,7 @@ footer{border-top:1px solid var(--border);padding:24px 48px;display:flex;justify
 <!-- HERO -->
 <section id="hero">
   <div class="hero-media">
-    <iframe id="heroVimeo" src="https://player.vimeo.com/video/1198403761?autoplay=1&muted=1&loop=1&background=1&controls=0&playsinline=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen playsinline></iframe>
+    <iframe id="heroVimeo" src="https://player.vimeo.com/video/1198403761?autoplay=1&muted=1&loop=1&background=1&controls=0&playsinline=1&autopause=0&transparent=0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen playsinline webkit-playsinline></iframe>
   </div>
   <div class="hero-grad"></div>
   <div class="hero-grad2"></div>
@@ -360,23 +381,44 @@ footer{border-top:1px solid var(--border);padding:24px 48px;display:flex;justify
 var vimeoPlayer = null;
 var isMuted = true;
 
+// Vimeo 플레이어 초기화 — 모바일(Safari/Chrome) 자동재생 대응
+function initVimeo() {
+  var iframe = document.getElementById('heroVimeo');
+  if (!iframe || !window.Vimeo) return;
+  vimeoPlayer = new Vimeo.Player(iframe);
+  vimeoPlayer.setMuted(true);
+  vimeoPlayer.setVolume(0);
+  var playPromise = vimeoPlayer.play();
+  if (playPromise !== undefined) {
+    playPromise.catch(function() {
+      // 자동재생 정책으로 막힌 경우 — 첫 유저 인터랙션 시 재생
+      var events = ['touchstart', 'touchend', 'click', 'scroll'];
+      function onUserAction() {
+        vimeoPlayer.setMuted(true);
+        vimeoPlayer.play();
+        events.forEach(function(e) {
+          document.removeEventListener(e, onUserAction);
+        });
+      }
+      events.forEach(function(e) {
+        document.addEventListener(e, onUserAction, { once: true, passive: true });
+      });
+    });
+  }
+  // Page Visibility API — 탭 전환 후 복귀 시 재생 재개
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+      vimeoPlayer.getPaused().then(function(paused) {
+        if (paused) vimeoPlayer.play();
+      });
+    }
+  });
+}
+
 window.addEventListener('load', function() {
   var script = document.createElement('script');
   script.src = 'https://player.vimeo.com/api/player.js';
-  script.onload = function() {
-    var iframe = document.getElementById('heroVimeo');
-    if(iframe && window.Vimeo) {
-      vimeoPlayer = new Vimeo.Player(iframe);
-      vimeoPlayer.setMuted(true).then(function() {
-        return vimeoPlayer.play();
-      }).catch(function() {
-        document.addEventListener('touchstart', function tryPlay() {
-          vimeoPlayer.play();
-          document.removeEventListener('touchstart', tryPlay);
-        }, { once: true });
-      });
-    }
-  };
+  script.onload = initVimeo;
   document.head.appendChild(script);
 });
 
